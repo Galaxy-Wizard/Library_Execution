@@ -15,9 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Library_Execution.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClCompile Include="Dynamic_Extended_Library_Applications.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Dynamic_Extended_Library_Execution_Dialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Dynamic_Extended_Library_Applications.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -27,38 +40,26 @@
     <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Library_Execution_Dialog.h">
+    <ClInclude Include="Dynamic_Extended_Library_Applications.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Dynamic_Extended_Library_Execution_Dialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Library_Execution.cpp">
+    <Midl Include="DynamicExtendedLibraryApplications.idl">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Library_Execution_Dialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="LibraryExecution.rc">
+    <ResourceCompile Include="DynamicExtendedLibraryApplications.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\LibraryExecution.rc2">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Library_Execution.ico">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\Read.txt" />
-    <Text Include="..\License.txt" />
   </ItemGroup>
 </Project>
