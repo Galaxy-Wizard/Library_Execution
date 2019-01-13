@@ -57,4 +57,7 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\Read.txt" />
+  </ItemGroup>
 </Project>

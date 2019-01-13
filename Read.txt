@@ -1,0 +1,6 @@
+Executing functions of following type
+
+typedef PVOID(FAR WINAPI *FAR_FUNCTION_RESULT_POINTER)(PVOID);
+
+Parametes is a pointer to string of WCHAR terminating by zero symbol.
+Result is a pointer to string of WCHAR terminating by zero symbol.
