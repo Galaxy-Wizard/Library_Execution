@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "Library_Execution.h"
-#include "Library_ExecutionDialog.h"
+#include "Library_Execution_Dialog.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -66,6 +66,7 @@ void CLibraryExecutionDialog::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_FUNCTION_NAME, FunctionNameValue);
 	DDX_Text(pDX, IDC_EDIT_FUNCTION_PARAMETER, FunctionParameterValue);
 	DDX_Text(pDX, IDC_EDIT_FUNCTION_RESULT, FunctionResultValue);
+	DDX_Control(pDX, IDC_LIST_FUNCTION_NAME, ListFunctionNameControl);
 }
 
 BEGIN_MESSAGE_MAP(CLibraryExecutionDialog, CDialog)
@@ -74,6 +75,8 @@ BEGIN_MESSAGE_MAP(CLibraryExecutionDialog, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON_SELECT_FILE, &CLibraryExecutionDialog::OnBnClickedButtonSelectFile)
 	ON_BN_CLICKED(IDC_BUTTON_EXECUTE_FUNCTION, &CLibraryExecutionDialog::OnBnClickedButtonExecuteFunction)
+	ON_BN_CLICKED(IDC_BUTTON_LOAD_FUNCTIONS, &CLibraryExecutionDialog::OnBnClickedButtonLoadFunctions)
+	ON_LBN_SELCHANGE(IDC_LIST_FUNCTION_NAME, &CLibraryExecutionDialog::OnLbnSelchangeListFunctionName)
 END_MESSAGE_MAP()
 
 
@@ -186,6 +189,8 @@ void CLibraryExecutionDialog::OnBnClickedButtonSelectFile()
 	FunctionResultValue = FunctionResult;
 
 	UpdateData(FALSE);
+
+	OnBnClickedButtonLoadFunctions();
 }
 
 
@@ -199,39 +204,102 @@ void CLibraryExecutionDialog::OnBnClickedButtonExecuteFunction()
 
 	CString FunctionResult;
 
-	HMODULE ModuleHandle = LoadLibrary(LibraryPath);
+	char FunctionNameCString[10000];
 
-	if (ModuleHandle != nullptr)
+	memset(FunctionNameCString, 0, 10000 * sizeof(char));
+	
+	int FunctionNameGetLength = FunctionName.GetLength();
+
+	for (int i = 0; i < FunctionNameGetLength && i < 10000; i++)
 	{
-		typedef PVOID(FAR WINAPI *FAR_FUNCTION_RESULT_POINTER)(PVOID);
+		FunctionNameCString[i] = char(FunctionName.GetAt(i));
+	}
 
-		FAR_FUNCTION_RESULT_POINTER RemoteFunctionPointer = (FAR_FUNCTION_RESULT_POINTER)GetProcAddress(ModuleHandle, (LPCSTR)(FunctionName.GetBuffer()));
+	PWCHAR FunctionParameterCString = new WCHAR[10000];
 
-		if (RemoteFunctionPointer != nullptr)
+	if (FunctionParameterCString != nullptr)
+	{
+		memset(FunctionParameterCString, 0, 10000 * sizeof(WCHAR));
+
+		int FunctionParameterGetLength = FunctionParameter.GetLength();
+
+		for (int i = 0; i < FunctionParameterGetLength && i < 10000; i++)
 		{
-			Sleep(100);
-			PVOID FunctionResultPointer = RemoteFunctionPointer(FunctionParameter.GetBuffer());
+			FunctionParameterCString[i] = FunctionParameter.GetAt(i);
+		}
 
-			if (FunctionResultPointer != nullptr)
+		HMODULE ModuleHandle = LoadLibrary(LibraryPath);
+
+		if (ModuleHandle != nullptr)
+		{
+			typedef WCHAR * PWCHAR;
+
+			typedef PWCHAR(FAR WINAPI *FAR_FUNCTION_RESULT_POINTER)(PWCHAR);
+
+			FAR_FUNCTION_RESULT_POINTER RemoteFunctionPointer = (FAR_FUNCTION_RESULT_POINTER)GetProcAddress(ModuleHandle, FunctionNameCString);
+
+			if (RemoteFunctionPointer != nullptr)
 			{
-				FunctionResult = CString((TCHAR*)(FunctionResultPointer));
+				Sleep(100);
+				PWCHAR FunctionResultPointer = RemoteFunctionPointer(FunctionParameterCString);
+
+				if (FunctionResultPointer != nullptr)
+				{
+					if (FunctionResultPointer != nullptr)
+					{
+						FunctionResult = CString(FunctionResultPointer);
+
+						delete[]FunctionResultPointer;
+					}
+					else
+					{
+						FunctionResult = CString("Function returnet zero pointer.");
+					}
+				}
+				else
+				{
+					FunctionResult = CString("Function was not loaded.");
+				}
 			}
 			else
 			{
-				FunctionResult = CString("Function was not loaded.");
+				FunctionResult = CString("Function was not found.");
 			}
 		}
 		else
 		{
-			FunctionResult = CString("Function was not found.");
+			FunctionResult = CString("Module was not loaded.");
 		}
+
+		delete[]FunctionParameterCString;
 	}
 	else
 	{
-		FunctionResult = CString("Module was not loaded.");
+		FunctionResult = CString("Not enouph memoty.");
 	}
 
 	FunctionResultValue = FunctionResult;
+
+	UpdateData(FALSE);
+}
+
+
+void CLibraryExecutionDialog::OnBnClickedButtonLoadFunctions()
+{
+	ListFunctionNameControl.AddString(L"Main");
+
+	UpdateData(FALSE);
+}
+
+
+void CLibraryExecutionDialog::OnLbnSelchangeListFunctionName()
+{
+	int CurrentlySelected = ListFunctionNameControl.GetCurSel();
+
+	if (CurrentlySelected >= 0)
+	{
+		ListFunctionNameControl.GetText(CurrentlySelected, FunctionNameValue);
+	}
 
 	UpdateData(FALSE);
 }
