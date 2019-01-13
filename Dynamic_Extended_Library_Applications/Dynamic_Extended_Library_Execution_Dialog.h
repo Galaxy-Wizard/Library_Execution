@@ -38,4 +38,7 @@ public:
 	CString FunctionNameValue;
 	CString FunctionParameterValue;
 	CString FunctionResultValue;
+	afx_msg void OnBnClickedButtonLoadFunctions();
+	CListBox ListFunctionNameControl;
+	afx_msg void OnLbnSelchangeListFunctionName();
 };

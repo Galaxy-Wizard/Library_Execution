@@ -1,0 +1,10 @@
+﻿// Dynamic_Extended_Library_Applications.idl : type library source for Dynamic_Extended_Library_Applications.dll
+// This file will be processed by the MIDL compiler to produce the
+// type library (Dynamic_Extended_Library_Applications.tlb).
+
+[ uuid(d2fa8109-3b08-4c8c-932e-70e776335784), version(1.0) ]
+library DynamicExtendedLibraryApplications
+{
+	importlib("stdole32.tlb");
+	importlib("stdole2.tlb");
+};
