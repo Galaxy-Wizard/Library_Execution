@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "Library_Execution.h"
-#include "Library_ExecutionDlg.h"
+#include "Library_ExecutionDialog.h"
 #include "afxdialogex.h"
 
 #ifdef _DEBUG
@@ -51,6 +51,10 @@ END_MESSAGE_MAP()
 
 CLibraryExecutionDialog::CLibraryExecutionDialog(CWnd* pParent /*=nullptr*/)
 	: CDialog(IDD_LIBRARY_EXECUTION_DIALOG, pParent)
+	, LibraryFileValue(_T(""))
+	, FunctionNameValue(_T(""))
+	, FunctionParameterValue(_T(""))
+	, FunctionResultValue(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -58,12 +62,18 @@ CLibraryExecutionDialog::CLibraryExecutionDialog(CWnd* pParent /*=nullptr*/)
 void CLibraryExecutionDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
+	DDX_Text(pDX, IDC_EDIT_LIBRARY_FILE, LibraryFileValue);
+	DDX_Text(pDX, IDC_EDIT_FUNCTION_NAME, FunctionNameValue);
+	DDX_Text(pDX, IDC_EDIT_FUNCTION_PARAMETER, FunctionParameterValue);
+	DDX_Text(pDX, IDC_EDIT_FUNCTION_RESULT, FunctionResultValue);
 }
 
 BEGIN_MESSAGE_MAP(CLibraryExecutionDialog, CDialog)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_SELECT_FILE, &CLibraryExecutionDialog::OnBnClickedButtonSelectFile)
+	ON_BN_CLICKED(IDC_BUTTON_EXECUTE_FUNCTION, &CLibraryExecutionDialog::OnBnClickedButtonExecuteFunction)
 END_MESSAGE_MAP()
 
 
@@ -152,3 +162,76 @@ HCURSOR CLibraryExecutionDialog::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CLibraryExecutionDialog::OnBnClickedButtonSelectFile()
+{
+	CFileDialog OpenDialog(TRUE);
+
+	CString FunctionResult;
+
+	if (OpenDialog.DoModal() == IDOK)
+	{
+		CString LibraryPath = OpenDialog.GetPathName();
+
+		LibraryFileValue = LibraryPath;
+
+		FunctionResult = CString("File was selected.");
+	}
+	else
+	{
+		FunctionResult = CString("File selection was canceled.");
+	}
+
+	FunctionResultValue = FunctionResult;
+
+	UpdateData(FALSE);
+}
+
+
+void CLibraryExecutionDialog::OnBnClickedButtonExecuteFunction()
+{
+	UpdateData(TRUE);
+
+	CString LibraryPath = LibraryFileValue;
+	CString FunctionName = FunctionNameValue;
+	CString FunctionParameter = FunctionParameterValue;
+
+	CString FunctionResult;
+
+	HMODULE ModuleHandle = LoadLibrary(LibraryPath);
+
+	if (ModuleHandle != nullptr)
+	{
+		typedef PVOID(FAR WINAPI *FAR_FUNCTION_RESULT_POINTER)(PVOID);
+
+		FAR_FUNCTION_RESULT_POINTER RemoteFunctionPointer = (FAR_FUNCTION_RESULT_POINTER)GetProcAddress(ModuleHandle, (LPCSTR)(FunctionName.GetBuffer()));
+
+		if (RemoteFunctionPointer != nullptr)
+		{
+			Sleep(100);
+			PVOID FunctionResultPointer = RemoteFunctionPointer(FunctionParameter.GetBuffer());
+
+			if (FunctionResultPointer != nullptr)
+			{
+				FunctionResult = CString((TCHAR*)(FunctionResultPointer));
+			}
+			else
+			{
+				FunctionResult = CString("Function was not loaded.");
+			}
+		}
+		else
+		{
+			FunctionResult = CString("Function was not found.");
+		}
+	}
+	else
+	{
+		FunctionResult = CString("Module was not loaded.");
+	}
+
+	FunctionResultValue = FunctionResult;
+
+	UpdateData(FALSE);
+}

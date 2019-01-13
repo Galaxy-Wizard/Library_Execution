@@ -31,4 +31,11 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnBnClickedButtonSelectFile();
+	CString LibraryFileValue;
+	afx_msg void OnBnClickedButtonExecuteFunction();
+	CString FunctionNameValue;
+	CString FunctionParameterValue;
+	CString FunctionResultValue;
 };

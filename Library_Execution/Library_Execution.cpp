@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "Library_Execution.h"
-#include "Library_ExecutionDlg.h"
+#include "Library_ExecutionDialog.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
