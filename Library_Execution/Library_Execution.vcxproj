@@ -209,6 +209,7 @@
     <Image Include="res\Library_Execution.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="..\License.txt" />
     <Text Include="..\Read.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
