@@ -3,7 +3,7 @@
 
 Executing functions of following type
 
-typedef PWCHAR(FAR WINAPI *FAR_FUNCTION_RESULT_POINTER)(PWCHAR);
+typedef PWCHAR(FAR WINAPI *FAR_FUNCTION_POINTER)(PWCHAR);
 
 Example.
 
