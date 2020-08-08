@@ -296,6 +296,11 @@ void CLibraryExecutionDialog::OnBnClickedButtonLoadFunctions()
 
 	LibraryFileValue = CString(FileName);
 
+	for (; ListFunctionNameControl.GetCount() != 0;)
+	{
+		ListFunctionNameControl.DeleteString(0);
+	}
+
 	ListFunctionNameControl.AddString(L"GetChessFigures");
 
 	UpdateData(FALSE);

@@ -286,6 +286,10 @@ void CLibraryExecutionDialog::OnBnClickedButtonExecuteFunction()
 
 void CLibraryExecutionDialog::OnBnClickedButtonLoadFunctions()
 {
+	for (; ListFunctionNameControl.GetCount() != 0;)
+	{
+		ListFunctionNameControl.DeleteString(0);
+	}
 	ListFunctionNameControl.AddString(L"Main");
 
 	UpdateData(FALSE);
